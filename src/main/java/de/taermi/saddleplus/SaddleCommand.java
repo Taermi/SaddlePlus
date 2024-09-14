@@ -1,6 +1,7 @@
 package de.taermi.saddleplus;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -39,7 +40,7 @@ public class SaddleCommand implements CommandExecutor {
             }
         }
 
-        player.sendMessage(ChatColor.RED + "Usage: /saddle <claim|unclaim>");
+        Utils.sendActionbarMSG(player, "Usage: /saddle <claim | unclaim>", ChatColor.RED);
         return false;
     }
 
@@ -47,7 +48,7 @@ public class SaddleCommand implements CommandExecutor {
         // check if player has a saddle in hand
         ItemStack heldItem = player.getInventory().getItemInMainHand();
         if (heldItem.getType() != Material.SADDLE) {
-            player.sendMessage(ChatColor.RED + "You must hold a saddle to claim it.");
+            Utils.sendActionbarMSG(player, "You must hold a saddle to claim it.", ChatColor.RED);
             return true;
         }
 
@@ -59,7 +60,7 @@ public class SaddleCommand implements CommandExecutor {
                 String owner = meta.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
                 // player can only claim if the saddle do not have an owner:
                 if (!owner.isEmpty()) {
-                    player.sendMessage(ChatColor.RED + "This saddle is already claimed by " + owner + ".");
+                    Utils.sendActionbarMSG(player, "This saddle is already claimed by " + owner + ".", ChatColor.RED);
                     return true;
                 }
             }
@@ -68,7 +69,7 @@ public class SaddleCommand implements CommandExecutor {
             meta.getPersistentDataContainer().set(ownerKey, PersistentDataType.STRING, player.getName());
             meta.setDisplayName(ChatColor.GOLD + player.getName() + "'s Saddle"); // set saddle name
             heldItem.setItemMeta(meta);
-            player.sendMessage(ChatColor.GREEN + "You have claimed the saddle.");
+            Utils.sendActionbarMSG(player, "You have claimed the saddle.", ChatColor.GREEN);
             return true;
         }
         return false;
@@ -79,7 +80,7 @@ public class SaddleCommand implements CommandExecutor {
         ItemStack heldItem = player.getInventory().getItemInMainHand();
 
         if (heldItem.getType() != Material.SADDLE) {
-            player.sendMessage(ChatColor.RED + "You must hold a saddle to unclaim it.");
+            Utils.sendActionbarMSG(player, "You must hold a saddle to unclaim it.", ChatColor.RED);
             return true;
         }
 
@@ -93,16 +94,16 @@ public class SaddleCommand implements CommandExecutor {
                     meta.getPersistentDataContainer().remove(ownerKey);
                     meta.setDisplayName(ChatColor.RESET + "Saddle"); // changes name to default
                     heldItem.setItemMeta(meta);
-                    player.sendMessage(ChatColor.GREEN + "You have unclaimed your saddle.");
+                    Utils.sendActionbarMSG(player, "You have unclaimed your saddle.", ChatColor.GREEN);
                     return true;
                 } else {
-                    player.sendMessage(ChatColor.RED + "You are not the owner of this saddle.");
+                    Utils.sendActionbarMSG(player, "You aren't the owner of this saddle.", ChatColor.RED);
                     return true;
                 }
             }
         }
 
-        player.sendMessage(ChatColor.RED + "You do not have a saddle to unclaim.");
+        Utils.sendActionbarMSG(player, "You don't have a saddle to unclaim.", ChatColor.RED);
         return true;
     }
 }

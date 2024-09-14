@@ -1,6 +1,5 @@
 package de.taermi.saddleplus;
 
-import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -10,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import net.md_5.bungee.api.ChatColor;
 
 public class SaddleListener implements Listener {
 
@@ -44,7 +44,7 @@ public class SaddleListener implements Listener {
             if (meta.getPersistentDataContainer().has(ownerKey, PersistentDataType.STRING)) {
                 String owner = meta.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
                 if (!owner.equals(player.getName())) {
-                    player.sendMessage(ChatColor.RED + "You aren't the owner of this animal.");
+                    Utils.sendActionbarMSG(player, "You aren't the owner of this animal.", ChatColor.RED);
                     // cancel the event to prevent mounting
                     event.setCancelled(true);
                 }

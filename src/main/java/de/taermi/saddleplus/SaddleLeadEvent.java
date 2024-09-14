@@ -1,6 +1,6 @@
 package de.taermi.saddleplus;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -34,7 +34,7 @@ public class SaddleLeadEvent implements Listener {
                 // check if owner
                 if (!owner.equals(player.getName())) {
                     event.setCancelled(true);  // block leash
-                    player.sendMessage(ChatColor.RED + "You cannot leash other player animals.");
+                    Utils.sendActionbarMSG(player, "You can't leash other player animals.", ChatColor.RED);
                 }
             }
         }

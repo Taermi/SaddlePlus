@@ -1,6 +1,6 @@
 package de.taermi.saddleplus;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -37,7 +37,7 @@ public class SaddleDamageEvent implements Listener {
                     // if attacker isn't owner cancel event
                     if (!owner.equals(player.getName())) {
                         event.setCancelled(true);
-                        player.sendMessage(ChatColor.RED + "You cannot harm other player animals.");
+                        Utils.sendActionbarMSG(player, "You can't harm other player animals.", ChatColor.RED);
                     }
                 } else if (event.getDamager() instanceof Projectile projectile) {
                     // check if projectile from player
@@ -46,7 +46,7 @@ public class SaddleDamageEvent implements Listener {
                         Player player = (Player) shooter;
                         if (!owner.equals(player.getName())) {
                             event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + "You cannot harm other player animals.");
+                            Utils.sendActionbarMSG(player, "You can't harm other player animals.", ChatColor.RED);
                         }
                     }
                 } else if (event.getDamager() instanceof TNTPrimed tnt) {
@@ -56,7 +56,7 @@ public class SaddleDamageEvent implements Listener {
                         Player player = (Player) source;
                         if (!owner.equals(player.getName())) {
                             event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + "You cannot harm other player animals.");
+                            Utils.sendActionbarMSG(player, "You can't harm other player animals.", ChatColor.RED);
                         }
                     }
                 }
@@ -84,7 +84,7 @@ public class SaddleDamageEvent implements Listener {
                         if (!owner.equals(player.getName())) {
                             for (PotionEffect effect : event.getPotion().getEffects()) {
                                     event.setCancelled(true);
-                                    player.sendMessage(ChatColor.RED + "You cannot harm other player animals.");
+                                    Utils.sendActionbarMSG(player, "You can't harm other player animals.", ChatColor.RED);
                                     break;
                             }
                         }
