@@ -1,0 +1,8 @@
+name: SaddlePlus
+version: '1.0'
+main: de.taermi.saddleplus.SaddlePlus
+api-version: '1.21'
+commands:
+  saddle:
+    usage: "/saddle <claim|unclaim>"
+    description: Claims or unclaims a saddle.
