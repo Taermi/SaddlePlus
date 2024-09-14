@@ -2,11 +2,7 @@ package de.taermi.saddleplus;
 
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Donkey;
-import org.bukkit.entity.Mule;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
@@ -37,17 +33,8 @@ public class SaddleListener implements Listener {
     }
 
     private ItemStack getSaddle(Entity entity) {
-        // check if entity has saddle
-        if (entity instanceof Horse) {
-            Horse horse = (Horse) entity;
+        if (entity instanceof AbstractHorse horse)
             return horse.getInventory().getSaddle();
-        } else if (entity instanceof Donkey) {
-            Donkey donkey = (Donkey) entity;
-            return donkey.getInventory().getSaddle();
-        } else if (entity instanceof Mule) {
-            Mule mule = (Mule) entity;
-            return mule.getInventory().getSaddle();
-        }
         return null;
     }
 

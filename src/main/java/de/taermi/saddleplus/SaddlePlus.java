@@ -10,11 +10,12 @@ public final class SaddlePlus extends JavaPlugin {
         // Plugin startup logic
         getLogger().info(ChatColor.BLUE + "Saddle" + ChatColor.YELLOW + "Plus" + ChatColor.GREEN + " enabled!");
 
-        this.getCommand("saddle").setExecutor(new de.taermi.saddleplus.SaddleCommand(this));
+        this.getCommand("saddle").setExecutor(new SaddleCommand(this));
 
-        // Event listener registrieren
-        getServer().getPluginManager().registerEvents(new de.taermi.saddleplus.SaddleListener(this), this);
-        getServer().getPluginManager().registerEvents(new de.taermi.saddleplus.SaddleDamageEvent(this), this);
+        // Event listener
+        getServer().getPluginManager().registerEvents(new SaddleListener(this), this);
+        getServer().getPluginManager().registerEvents(new SaddleDamageEvent(this), this);
+        getServer().getPluginManager().registerEvents(new SaddleLeadEvent(this), this);
 
     }
 
