@@ -19,6 +19,7 @@ public final class SaddlePlus extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SaddleGriefPlace(this), this);
         getServer().getPluginManager().registerEvents(new SaddleCommandTrigger(this), this);
         getServer().getPluginManager().registerEvents(new SkeletonHorseProtection(this), this);
+        getServer().getPluginManager().registerEvents(new CreeperHorseProtection(this), this);
 
     }
 

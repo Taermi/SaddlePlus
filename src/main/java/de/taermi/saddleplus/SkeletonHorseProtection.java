@@ -2,11 +2,7 @@ package de.taermi.saddleplus;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -27,8 +23,8 @@ public class SkeletonHorseProtection implements Listener {
     @EventHandler
     public void onSkeletonTargetPlayer(EntityTargetEvent event) {
         // check if a skeleton targets a player
-        if (event.getEntity() instanceof Skeleton && event.getTarget() instanceof Player) {
-            Skeleton skeleton = (Skeleton) event.getEntity();
+        if (event.getEntity() instanceof AbstractSkeleton && event.getTarget() instanceof Player) { //Changed to AbstractSkeleton to include Strays, instanceof Skeleton is only Skeleton
+            AbstractSkeleton skeleton = (AbstractSkeleton) event.getEntity();
             Player player = (Player) event.getTarget();
 
             // saves target player
@@ -41,16 +37,16 @@ public class SkeletonHorseProtection implements Listener {
         Entity damagedEntity = event.getEntity();
 
         // check if the damaged entity is a horse
-        if (damagedEntity instanceof Horse) {
-            Horse horse = (Horse) damagedEntity;
+        if (damagedEntity instanceof AbstractHorse) {
+            AbstractHorse horse = (AbstractHorse) damagedEntity;
 
             // check if the damage is caused by an arrow
             if (event.getDamager() instanceof Arrow) {
                 Arrow arrow = (Arrow) event.getDamager();
 
                 // check if the arrow is shot by a skeleton
-                if (arrow.getShooter() instanceof Skeleton) {
-                    Skeleton skeleton = (Skeleton) arrow.getShooter();
+                if (arrow.getShooter() instanceof AbstractSkeleton) {
+                    AbstractSkeleton skeleton = (AbstractSkeleton) arrow.getShooter();
 
                     // check for the skeletons target player
                     if (this.skeletonTargetPlayer != null) {
