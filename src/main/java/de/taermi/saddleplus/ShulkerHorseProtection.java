@@ -7,51 +7,51 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class ShulkerHorseProtection implements Listener {
 
     private final NamespacedKey ownerKey;
-    private Player shulkerTargetPlayer = null;
+    // map to store target player for each shulker
+    private final Map<Shulker, Player> shulkerTargetMap = new WeakHashMap<>();
 
-    public ShulkerHorseProtection(JavaPlugin plugin) {
-        this.ownerKey = new NamespacedKey(plugin, "saddleOwner");
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+    public ShulkerHorseProtection(NamespacedKey ownerKey) {
+        this.ownerKey = ownerKey;
+        Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugin("SaddlePlus"));
     }
 
     @EventHandler
     public void onShulkerTargetPlayer(EntityTargetEvent event) {
+        // check if a shulker targets a player
         if (event.getEntity() instanceof Shulker && event.getTarget() instanceof Player) {
             Shulker shulker = (Shulker) event.getEntity();
             Player player = (Player) event.getTarget();
-
-            this.shulkerTargetPlayer = player;
+            // store the shulkers target player in the map
+            shulkerTargetMap.put(shulker, player);
         }
     }
 
     @EventHandler
     public void onHorseDamageByShulkerBullet(EntityDamageByEntityEvent event) {
         Entity damagedEntity = event.getEntity();
-
+        // check if the damaged entity is a horse/donkey/mule
         if (damagedEntity instanceof AbstractHorse) {
             AbstractHorse horse = (AbstractHorse) damagedEntity;
-
-            // projectilename = ShulkerBullet
             if (event.getDamager() instanceof ShulkerBullet) {
                 ShulkerBullet bullet = (ShulkerBullet) event.getDamager();
-
                 if (bullet.getShooter() instanceof Shulker) {
                     Shulker shulker = (Shulker) bullet.getShooter();
-
-                    if (this.shulkerTargetPlayer != null) {
+                    Player targetPlayer = shulkerTargetMap.get(shulker);
+                    if (targetPlayer != null) {
                         if (horse.getInventory().getSaddle() != null && horse.getInventory().getSaddle().getItemMeta() != null) {
                             String owner = horse.getInventory().getSaddle().getItemMeta()
                                     .getPersistentDataContainer()
                                     .get(ownerKey, PersistentDataType.STRING);
-
-                            if (owner != null && !owner.isEmpty() && !owner.equals(shulkerTargetPlayer.getName())) {
-                                // shulkerTargetPlayer.sendMessage("debug: shulkerbullet blocked"); //debugmessage to test if it works
+                            if (owner != null && !owner.isEmpty() && !owner.equals(targetPlayer.getName())) {
+                                //targetPlayer.sendMessage("debug: shulkerbullet blocked"); // Debug message to test if it works
                                 event.setCancelled(true);
                             }
                         }

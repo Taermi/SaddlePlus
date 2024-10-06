@@ -1,5 +1,6 @@
 package de.taermi.saddleplus;
 
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -8,15 +9,15 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 import net.md_5.bungee.api.ChatColor;
 
 public class SaddleListener implements Listener {
 
     private final NamespacedKey ownerKey;
 
-    public SaddleListener(JavaPlugin plugin) {
-        this.ownerKey = new NamespacedKey(plugin, "saddleOwner");
+    public SaddleListener(NamespacedKey ownerKey) {
+        this.ownerKey = ownerKey;
+        Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugin("SaddlePlus"));
     }
 
     @EventHandler

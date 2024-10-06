@@ -1,6 +1,7 @@
 package de.taermi.saddleplus;
 
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -10,7 +11,6 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -18,8 +18,9 @@ public class SaddleDamageEvent implements Listener {
 
     private final NamespacedKey ownerKey;
 
-    public SaddleDamageEvent(JavaPlugin plugin) {
-        this.ownerKey = new NamespacedKey(plugin, "saddleOwner");
+    public SaddleDamageEvent(NamespacedKey ownerKey) {
+        this.ownerKey = ownerKey;
+        Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugin("SaddlePlus"));
     }
 
     @EventHandler

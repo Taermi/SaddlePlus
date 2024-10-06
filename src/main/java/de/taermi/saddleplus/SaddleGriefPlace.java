@@ -1,6 +1,7 @@
 package de.taermi.saddleplus;
 
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.AbstractHorse;
@@ -14,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.Action;
@@ -23,8 +23,9 @@ public class SaddleGriefPlace implements Listener {
 
     private final NamespacedKey ownerKey;
 
-    public SaddleGriefPlace(JavaPlugin plugin) {
-        this.ownerKey = new NamespacedKey(plugin, "saddleOwner");
+    public SaddleGriefPlace(NamespacedKey ownerKey) {
+        this.ownerKey = ownerKey;
+        Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugin("SaddlePlus"));
     }
 
     // BlockPlaceEvent for fire placement

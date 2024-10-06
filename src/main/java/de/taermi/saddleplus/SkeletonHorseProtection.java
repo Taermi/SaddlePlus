@@ -7,28 +7,31 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class SkeletonHorseProtection implements Listener {
 
     private final NamespacedKey ownerKey;
-    private Player skeletonTargetPlayer = null; // track target player from skeleton
+    // map to store target player for each skeleton
+    private final Map<AbstractSkeleton, Player> skeletonTargetMap = new WeakHashMap<>();
 
-    public SkeletonHorseProtection(JavaPlugin plugin) {
-        this.ownerKey = new NamespacedKey(plugin, "saddleOwner");
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+    public SkeletonHorseProtection(NamespacedKey ownerKey) {
+        this.ownerKey = ownerKey;
+        Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugin("SaddlePlus"));
     }
 
     @EventHandler
     public void onSkeletonTargetPlayer(EntityTargetEvent event) {
         // check if a skeleton targets a player
-        if (event.getEntity() instanceof AbstractSkeleton && event.getTarget() instanceof Player) { //Changed to AbstractSkeleton to include Strays, instanceof Skeleton is only Skeleton
+        if (event.getEntity() instanceof AbstractSkeleton && event.getTarget() instanceof Player) {
             AbstractSkeleton skeleton = (AbstractSkeleton) event.getEntity();
             Player player = (Player) event.getTarget();
 
-            // saves target player
-            this.skeletonTargetPlayer = player;
+            // store the skeletons target player in the map
+            skeletonTargetMap.put(skeleton, player);
         }
     }
 
@@ -36,7 +39,7 @@ public class SkeletonHorseProtection implements Listener {
     public void onHorseDamageBySkeletonArrow(EntityDamageByEntityEvent event) {
         Entity damagedEntity = event.getEntity();
 
-        // check if the damaged entity is a horse
+        // check if the damaged entity is a horse/donkey/mule
         if (damagedEntity instanceof AbstractHorse) {
             AbstractHorse horse = (AbstractHorse) damagedEntity;
 
@@ -48,16 +51,18 @@ public class SkeletonHorseProtection implements Listener {
                 if (arrow.getShooter() instanceof AbstractSkeleton) {
                     AbstractSkeleton skeleton = (AbstractSkeleton) arrow.getShooter();
 
-                    // check for the skeletons target player
-                    if (this.skeletonTargetPlayer != null) {
-                        // get horse owner (if the horse has a saddle with an owner)
+                    // get the target player for this skeleton from the map
+                    Player targetPlayer = skeletonTargetMap.get(skeleton);
+
+                    if (targetPlayer != null) {
                         if (horse.getInventory().getSaddle() != null && horse.getInventory().getSaddle().getItemMeta() != null) {
                             String owner = horse.getInventory().getSaddle().getItemMeta()
                                     .getPersistentDataContainer()
                                     .get(ownerKey, PersistentDataType.STRING);
 
                             // if the horse has an owner and its not the skeletons target, prevent damage
-                            if (owner != null && !owner.isEmpty() && !owner.equals(skeletonTargetPlayer.getName())) {
+                            if (owner != null && !owner.isEmpty() && !owner.equals(targetPlayer.getName())) {
+                                //targetPlayer.sendMessage(skeletonTargetMap.toString()); //test if the WeakHashMap deletes dead/unloaded enemys
                                 event.setCancelled(true);
                             }
                         }

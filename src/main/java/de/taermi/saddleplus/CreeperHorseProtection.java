@@ -6,19 +6,21 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class CreeperHorseProtection implements Listener {
 
     private final NamespacedKey ownerKey;
-    private Player creeperTargetPlayer = null; // track creepers target player
+    // map to store target player for each creeper
+    private final Map<Creeper, Player> creeperTargetMap = new WeakHashMap<>();
 
-    public CreeperHorseProtection(JavaPlugin plugin) {
-        this.ownerKey = new NamespacedKey(plugin, "saddleOwner");
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+    public CreeperHorseProtection(NamespacedKey ownerKey) {
+        this.ownerKey = ownerKey;
+        Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugin("SaddlePlus"));
     }
 
     @EventHandler
@@ -27,48 +29,35 @@ public class CreeperHorseProtection implements Listener {
         if (event.getEntity() instanceof Creeper && event.getTarget() instanceof Player) {
             Creeper creeper = (Creeper) event.getEntity();
             Player player = (Player) event.getTarget();
-
-            // saves creeper targetplayer
-            this.creeperTargetPlayer = player;
+            // save creeper target player in the map
+            creeperTargetMap.put(creeper, player);
         }
     }
 
     @EventHandler
     public void onHorseDamageByCreeper(EntityDamageByEntityEvent event) {
         Entity damagedEntity = event.getEntity();
-
         // check for horse
         if (damagedEntity instanceof AbstractHorse) {
             AbstractHorse horse = (AbstractHorse) damagedEntity;
-
             // check if damage by creeper explosion
             if (event.getDamager() instanceof Creeper) {
                 Creeper creeper = (Creeper) event.getDamager();
-
-                if (this.creeperTargetPlayer != null) {
+                // get the target player for this creeper from the map
+                Player targetPlayer = creeperTargetMap.get(creeper);
+                if (targetPlayer != null) {
                     // get horse owner
                     if (horse.getInventory().getSaddle() != null && horse.getInventory().getSaddle().getItemMeta() != null) {
                         String owner = horse.getInventory().getSaddle().getItemMeta()
                                 .getPersistentDataContainer()
                                 .get(ownerKey, PersistentDataType.STRING);
-
-                        // prevent damage if entity horse
-                        if (owner != null && !owner.isEmpty() && !owner.equals(creeperTargetPlayer.getName())) {
+                        // prevent damage if the horse owner is not the creepers target player
+                        if (owner != null && !owner.isEmpty() && !owner.equals(targetPlayer.getName())) {
                             event.setCancelled(true);
                         }
                     }
                 }
             }
-        }
-    }
-
-    @EventHandler
-    public void onCreeperExplosion(EntityExplodeEvent event) {
-        Entity creeper = event.getEntity();
-
-        // If a creeper explodes, clear the target player, because the creeper no longer exists
-        if (creeper instanceof Creeper) {
-            creeperTargetPlayer = null;
         }
     }
 }
