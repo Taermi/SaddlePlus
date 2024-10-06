@@ -24,7 +24,7 @@ public class SaddleCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("This command can only be used by players.");
+            sender.sendMessage("This command can only be used by players."); //console only, so this isn't an action bar message
             return true;
         }
 
